@@ -1,0 +1,81 @@
+---
+name: CPP CI
+
+on:
+  pull_request:
+
+concurrency:
+  # Cancel any CI/CD workflow currently in progress for the same PR.
+  # Allow running concurrently with any other commits.
+  group: build-${{ github.event.pull_request.number || github.sha }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+jobs:
+  build_windows:
+    permissions:
+      actions: write  # for fkirc/skip-duplicate-actions to skip or stop workflow runs
+      contents: read  # for actions/checkout to fetch code
+    strategy:
+      matrix:
+        configurations: [Debug, Release]
+    runs-on: windows-latest
+    env:
+      # Configuration type to build.  For documentation on how build matrices work, see
+      # https://docs.github.com/actions/learn-github-actions/managing-complex-workflows#using-a-build-matrix
+      BUILD_CONFIGURATION: ${{matrix.configurations}}
+      BUILD_PLATFORM: x64
+      SOLUTION_FILE: sample_program/sample_program.sln
+
+    steps:
+      - id: skip_check
+        uses: fkirc/skip-duplicate-actions@f75f66ce1886f00957d99748a42c724f4330bdcf  # v5.3.1
+        with:
+          cancel_others: 'false'
+          paths_ignore: '["**.md"]'
+
+      - name: Install LLVM 18.1.8
+        if: steps.skip_check.outputs.should_skip != 'true'
+        run: |
+          # Install LLVM 18.1.8 to ensure consistent version across runners
+          try {
+            choco install llvm --version=18.1.8 --allow-downgrade -y --force
+            # Add installed LLVM to PATH first so it takes precedence
+            echo "C:\Program Files\LLVM\bin" | Out-File -FilePath $env:GITHUB_PATH -Encoding utf8 -Append
+            Write-Host "Successfully installed LLVM 18.1.8"
+          } catch {
+            Write-Warning "Failed to install LLVM 18.1.8 via chocolatey: $($_.Exception.Message)"
+            Write-Host "Continuing with pre-installed LLVM version"
+          }
+
+      - uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8  # v5.0.0
+        if: steps.skip_check.outputs.should_skip != 'true'
+        with:
+          submodules: 'recursive'
+
+      - name: Add MSBuild to PATH
+        if: steps.skip_check.outputs.should_skip != 'true'
+        uses: microsoft/setup-msbuild@becb80cf9a036187bb1e07e74eb64e25850d757a
+
+      - name: Cache nuget packages
+        if: steps.skip_check.outputs.should_skip != 'true'
+        uses: actions/cache@v4
+        env:
+          cache-name: cache-nuget-modules
+        with:
+          path: packages
+          key: ${{ runner.os }}-${{env.BUILD_PLATFORM}}-${{env.BUILD_CONFIGURATION}}-${{env.BUILD_ARTIFACT_NAME}}-${{ hashFiles('**/packages.config') }}
+
+      - name: Restore NuGet packages
+        if: steps.skip_check.outputs.should_skip != 'true'
+        working-directory: ${{env.GITHUB_WORKSPACE}}
+        run: |
+          nuget restore ${{env.SOLUTION_FILE}}
+
+      - name: Build
+        if: steps.skip_check.outputs.should_skip != 'true'
+        working-directory: ${{env.GITHUB_WORKSPACE}}
+        run: |
+          msbuild /m /p:Configuration=${{env.BUILD_CONFIGURATION}} /p:Platform=${{env.BUILD_PLATFORM}} /p:Analysis='True' ${{env.SOLUTION_FILE}}
