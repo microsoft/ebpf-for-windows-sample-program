@@ -77,14 +77,14 @@
   <ItemGroup>
     <CustomBuild Include="sample_program.c">
       <FileType>CppCode</FileType>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(ClangExec) -g -target bpf -O2 -Werror $(ClangIncludes) -c %(Filename).c -o $(OutDir)%(Filename).o
-pushd $(OutDir)
-powershell -NonInteractive -ExecutionPolicy Unrestricted $(EbpfBinPath)\Convert-BpfToNative.ps1 -FileName %(Filename) -IncludeDir $(EbpfIncludePath) -Platform $(Platform) -Configuration $(Configuration) -KernelMode $true
+      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">"$(ClangExec)" -g -target bpf -O2 -Werror $(ClangIncludes) -c %(Filename).c -o $(OutDir)%(Filename).o
+pushd "$(OutDir)"
+powershell -NonInteractive -ExecutionPolicy Unrestricted "$(EbpfBinPath)\Convert-BpfToNative.ps1" -FileName %(Filename) -IncludeDir "$(EbpfIncludePath)" -Platform $(Platform) -Configuration $(Configuration) -KernelMode $true
 popd</Command>
       <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(OutDir)%(Filename).sys</Outputs>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(ClangExec) -g -target bpf -O2 -Werror $(ClangIncludes) -c %(Filename).c -o $(OutDir)%(Filename).o
-pushd $(OutDir)
-powershell -NonInteractive -ExecutionPolicy Unrestricted $(EbpfBinPath)\Convert-BpfToNative.ps1 -FileName %(Filename) -IncludeDir $(EbpfIncludePath) -Platform $(Platform) -Configuration $(Configuration) -KernelMode $true
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release|x64'">"$(ClangExec)" -g -target bpf -O2 -Werror $(ClangIncludes) -c %(Filename).c -o $(OutDir)%(Filename).o
+pushd "$(OutDir)"
+powershell -NonInteractive -ExecutionPolicy Unrestricted "$(EbpfBinPath)\Convert-BpfToNative.ps1" -FileName %(Filename) -IncludeDir "$(EbpfIncludePath)" -Platform $(Platform) -Configuration $(Configuration) -KernelMode $true
 popd</Command>
       <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(OutDir)%(Filename).sys</Outputs>
     </CustomBuild>

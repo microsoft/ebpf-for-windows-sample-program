@@ -6,21 +6,20 @@
 <Project>
   <!-- Select the best version of clang available (set ClangExec). -->
   <Choose>
-    <When Condition="Exists('$(VsInstallRoot)\VC\Tools\Llvm\bin\clang.exe')">
-      <PropertyGroup>
-        <ClangExec>$(VsInstallRoot)\VC\Tools\Llvm\bin\clang.exe</ClangExec>
-      </PropertyGroup>
-    </When>
     <When Condition="Exists('$(ProgramFiles)\LLVM\bin\clang.exe')">
       <PropertyGroup>
         <ClangExec>$(ProgramFiles)\LLVM\bin\clang.exe</ClangExec>
       </PropertyGroup>
     </When>
-    <!-- Verify this path or remove if not used by your restore flow -->
-    <When Condition="Exists('$(SolutionDir)packages\llvm.tools\clang.exe')">
+    <When Condition="Exists('$(VsInstallRoot)\VC\Tools\Llvm\bin\clang.exe')">
       <PropertyGroup>
-        <ClangExec>$(SolutionDir)packages\llvm.tools\clang.exe</ClangExec>
+        <ClangExec>$(VsInstallRoot)\VC\Tools\Llvm\bin\clang.exe</ClangExec>
       </PropertyGroup>
     </When>
   </Choose>
+  <ItemDefinitionGroup>
+    <ClCompile>
+      <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
+    </ClCompile>
+  </ItemDefinitionGroup>
 </Project>
