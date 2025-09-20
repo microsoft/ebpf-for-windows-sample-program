@@ -1,3 +1,5 @@
+# Copyright (c) eBPF for Windows contributors
+# SPDX-License-Identifier: MI
 ---
 name: CPP CI
 
@@ -66,7 +68,7 @@ jobs:
           cache-name: cache-nuget-modules
         with:
           path: packages
-          key: ${{ runner.os }}-${{env.BUILD_PLATFORM}}-${{env.BUILD_CONFIGURATION}}-${{env.BUILD_ARTIFACT_NAME}}-${{ hashFiles('**/packages.config') }}
+          key: ${{ runner.os }}-${{env.BUILD_PLATFORM}}-${{env.BUILD_CONFIGURATION}}-${{ hashFiles('**/packages.config') }}
 
       - name: Restore NuGet packages
         if: steps.skip_check.outputs.should_skip != 'true'
