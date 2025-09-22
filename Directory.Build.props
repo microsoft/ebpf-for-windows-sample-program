@@ -25,4 +25,7 @@
   <Target Name="PrintClangExec" AfterTargets="PrepareForBuild">
     <Message Text="ClangExec is: $(ClangExec)" Importance="high" />
   </Target>
+  <Target Name="PrintProgramFiles" BeforeTargets="PrepareForBuild">
+    <Message Text="ProgramFiles property is: $(ProgramFiles)" Importance="high" />
+  </Target>
 </Project>
