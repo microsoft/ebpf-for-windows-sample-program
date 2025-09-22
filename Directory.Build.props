@@ -19,7 +19,10 @@
   </Choose>
   <ItemDefinitionGroup>
     <ClCompile>
-      <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
+      <TestDebugInformationFormat>ProgramDatabase</TestDebugInformationFormat>
     </ClCompile>
   </ItemDefinitionGroup>
+  <Target Name="PrintClangExec" AfterTargets="PrepareForBuild">
+    <Message Text="ClangExec is: $(ClangExec)" Importance="high" />
+  </Target>
 </Project>
