@@ -92,6 +92,13 @@ jobs:
         run: |
           nuget restore ${{env.SOLUTION_FILE}}
 
+      - name: Export program info
+        if: steps.skip_check.outputs.should_skip != 'true'
+        working-directory: ${{env.GITHUB_WORKSPACE}}
+        run: |
+          .\sample_program\packages\eBPF-for-Windows.x64.0.21.1\build\native\bin\export_program_info.exe --clear
+          .\sample_program\packages\eBPF-for-Windows.x64.0.21.1\build\native\bin\export_program_info.exe   
+
       - name: Build
         if: steps.skip_check.outputs.should_skip != 'true'
         working-directory: ${{env.GITHUB_WORKSPACE}}
