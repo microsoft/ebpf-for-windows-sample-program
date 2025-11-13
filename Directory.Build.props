@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  Copyright (c) eBPF for Windows contributors
+  SPDX-License-Identifier: MIT
+-->
+<Project>
+  <Import Project="wdk.props" />
+  <!-- Select the best version of clang available (set ClangExec). -->
+  <Choose>
+    <When Condition="Exists('$(ProgramFiles)\LLVM\bin\clang.exe')">
+      <PropertyGroup>
+        <ClangExec>$(ProgramFiles)\LLVM\bin\clang.exe</ClangExec>
+      </PropertyGroup>
+    </When>
+    <When Condition="Exists('$(ProgramW6432)\LLVM\bin\clang.exe')">
+      <PropertyGroup>
+        <ClangExec>$(ProgramW6432)\LLVM\bin\clang.exe</ClangExec>
+      </PropertyGroup>
+    </When>
+    <When Condition="Exists('$(VsInstallRoot)\VC\Tools\Llvm\bin\clang.exe')">
+      <PropertyGroup>
+        <ClangExec>$(VsInstallRoot)\VC\Tools\Llvm\bin\clang.exe</ClangExec>
+      </PropertyGroup>
+    </When>
+  </Choose>
+  <ItemDefinitionGroup>
+    <ClCompile>
+      <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
+      <AdditionalIncludeDirectories>$(WdkContentRoot)\Include\10.0.26100.0\km;$(SolutionDir)..\..\..\packages\Microsoft.Windows.WDK.$(Platform).$(WDKVersion)\c\Include\10.0.26100.0\km;$(OutDir)</AdditionalIncludeDirectories>
+    </ClCompile>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Platform)'=='x64'">
+    <ClCompile>
+      <PreprocessorDefinitions>_AMD64_;_WIN32_WINNT=0x0a00;_WINDLL;_DISABLE_CONSTEXPR_MUTEX_CONSTRUCTOR;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+    </ClCompile>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Platform)'=='ARM64'">
+    <ClCompile>
+      <!-- Set the _ARM64_ as it is required by winnt.h for correct compilation rather than the standard _M_ARM64 -->
+      <PreprocessorDefinitions>_ARM64_;_WIN32_WINNT=0x0a00;_WINDLL;_DISABLE_CONSTEXPR_MUTEX_CONSTRUCTOR;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <!-- Set the option to emit both armv8.0 atomics and armv8.1 atomics with processor detection to select the best performing one.-->
+      <AdditionalOptions>/d2overrideInterlockedIntrinsArm64 %(AdditionalOptions)</AdditionalOptions>
+    </ClCompile>
+  </ItemDefinitionGroup>
+</Project>
