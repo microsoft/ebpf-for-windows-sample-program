@@ -19,11 +19,13 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <None Include="packages.config" />
-  </ItemGroup>
-  <ItemGroup>
     <CustomBuild Include="sample_program.c">
       <Filter>Source Files</Filter>
     </CustomBuild>
+  </ItemGroup>
+  <ItemGroup>
+    <CopyFileToFolders Include="sample_program.json">
+      <Filter>Source Files</Filter>
+    </CopyFileToFolders>
   </ItemGroup>
 </Project>

@@ -8,31 +8,25 @@
     <HostPlatform Condition="'$(HostPlatform)' == ''">$([System.Runtime.InteropServices.RuntimeInformation]::OSArchitecture)</HostPlatform>
     <WindowsTargetPlatformVersion>10.0.26100.0</WindowsTargetPlatformVersion>
     <WDKVersion>10.0.26100.4204</WDKVersion>
+    <EbpfVersion>1.0.0-rc1</EbpfVersion>
   </PropertyGroup>
-  <!-- Log the WDK version -->
-  <Target Name="LogWDKVersion" BeforeTargets="PrepareForBuild">
-    <Message Importance="high" Text="Using WDK version $(WDKVersion)" />
-    <Message Importance="high" Text="Using Windows target platform version $(WindowsTargetPlatformVersion)" />
-    <Message Importance="high" Text="Using host platform $(HostPlatform)" />
-    <Message Importance="high" Text="Using target platform $(Platform)" />
-    <Message Importance="high" Text="WDK content root: $(WdkContentRoot)" />
-    <Message Importance="high" Text="PROCESSOR_ARCHITECTURE is $(PROCESSOR_ARCHITECTURE)" />
-    <Message Importance="high" Text="PROCESSOR_ARCHITEW6432 is $(PROCESSOR_ARCHITEW6432)" />
-  </Target>
 
-  <Import Project="$(SolutionDir)..\..\..\packages\Microsoft.Windows.SDK.CPP.$(WDKVersion)\build\native\Microsoft.Windows.SDK.cpp.props" Condition="Exists('$(SolutionDir)..\..\..\packages\Microsoft.Windows.SDK.CPP.$(WDKVersion)\build\native\Microsoft.Windows.SDK.cpp.props')" />
-  <Import Project="$(SolutionDir)..\..\..\packages\Microsoft.Windows.WDK.$(Platform).$(WDKVersion)\build\native\Microsoft.Windows.WDK.$(Platform).props" Condition="Exists('$(SolutionDir)..\..\..\packages\Microsoft.Windows.WDK.$(Platform).$(WDKVersion)\build\native\Microsoft.Windows.WDK.$(Platform).props')" />
-  <Import Project="$(SolutionDir)..\..\..\packages\Microsoft.Windows.SDK.CPP.$(Platform).$(WDKVersion)\build\native\Microsoft.Windows.SDK.cpp.$(Platform).props" Condition="Exists('$(SolutionDir)..\..\..\packages\Microsoft.Windows.SDK.CPP.$(Platform).$(WDKVersion)\build\native\Microsoft.Windows.SDK.cpp.$(Platform).props')" />
-  <ImportGroup Label="ExtensionTargets">
-    <Import Project="$(SolutionDir)..\..\..\packages\Microsoft.Windows.SDK.CPP.$(WDKVersion)\build\native\Microsoft.Windows.SDK.cpp.targets" Condition="Exists('$(SolutionDir)..\..\..\packages\Microsoft.Windows.SDK.CPP.$(WDKVersion)\build\native\Microsoft.Windows.SDK.cpp.targets')" />
-  </ImportGroup>
-  <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
-    <PropertyGroup>
-      <ErrorText>This project references NuGet package(s) that are missing on this computer. Use NuGet Package Restore to download them.  For more information, see http://go.microsoft.com/fwlink/?LinkID=322105. The missing file is {0}.</ErrorText>
-    </PropertyGroup>
-    <Error Condition="!Exists('$(SolutionDir)..\..\..\packages\Microsoft.Windows.SDK.CPP.$(WDKVersion)\build\native\Microsoft.Windows.SDK.cpp.props')" Text="$([System.String]::Format('$(ErrorText)', '$(SolutionDir)..\..\..\packages\Microsoft.Windows.SDK.CPP.$(WDKVersion)\build\native\Microsoft.Windows.SDK.cpp.props'))" />
-    <Error Condition="!Exists('$(SolutionDir)..\..\..\packages\Microsoft.Windows.SDK.CPP.$(WDKVersion)\build\native\Microsoft.Windows.SDK.cpp.targets')" Text="$([System.String]::Format('$(ErrorText)', '$(SolutionDir)..\..\..\packages\Microsoft.Windows.SDK.CPP.$(WDKVersion)\build\native\Microsoft.Windows.SDK.cpp.targets'))" />
-    <Error Condition="!Exists('$(SolutionDir)..\..\..\packages\Microsoft.Windows.SDK.CPP.$(Platform).$(WDKVersion)\build\native\Microsoft.Windows.SDK.cpp.$(Platform).props')" Text="$([System.String]::Format('$(ErrorText)', '$(SolutionDir)..\..\..\packages\Microsoft.Windows.SDK.CPP.$(Platform).$(WDKVersion)\build\native\Microsoft.Windows.SDK.cpp.$(Platform).props'))" />
-    <Error Condition="!Exists('$(SolutionDir)..\..\..\packages\Microsoft.Windows.WDK.$(Platform).$(WDKVersion)\build\native\Microsoft.Windows.WDK.$(Platform).props')" Text="$([System.String]::Format('$(ErrorText)', '$(SolutionDir)..\..\..\packages\Microsoft.Windows.WDK.$(Platform).$(WDKVersion)\build\native\Microsoft.Windows.WDK.$(Platform).props'))" />
-  </Target>
+  <PropertyGroup Label="Packaging">
+    <!-- Default the target framework moniker to 'native' to work around PackageReference not supporting native projects. -->
+    <_NuGetTargetFallbackMoniker>$(_NuGetTargetFallbackMoniker);native,Version=v0.0</_NuGetTargetFallbackMoniker>
+  </PropertyGroup>
+
+  <ItemGroup Label="Project Dependencies">
+    <!-- eBPF SDK packages -->
+    <PackageReference Include="eBPF-for-Windows.x64" Version="$(EbpfVersion)" />
+
+    <!-- Windows SDK -->
+    <PackageReference Include="Microsoft.Windows.SDK.CPP" Version="$(WDKVersion)" />
+    <PackageReference Include="Microsoft.Windows.SDK.CPP.x64" Version="$(WDKVersion)" />
+
+    <!-- Windows WDK -->
+    <PackageReference Include="Microsoft.Windows.WDK.x64" Version="$(WDKVersion)" />
+  </ItemGroup>
+
+
 </Project>
