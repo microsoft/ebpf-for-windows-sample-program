@@ -1,0 +1,10 @@
+{
+  "elf_file" : "sample_program.o",
+  "program_type" : "bind",
+  "out_name" : "sample_program",
+  "alias" : "edgeosebpf@microsoft.com",
+  "description" : "Sample eBPF Program",
+  "company_name" : "Microsoft",
+  "version" : "0.0.1",
+  "product_name" : "Sample eBPF Program"
+}
