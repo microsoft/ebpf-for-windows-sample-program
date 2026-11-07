@@ -36,7 +36,7 @@ jobs:
     steps:
       - name: Cache Chocolatey packages
         if: steps.skip_check.outputs.should_skip != 'true'
-        uses: actions/cache@v5
+        uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
         with:
           path: "C:\\ProgramData\\chocolatey"
           key: ${{ runner.os }}-choco-${{ hashFiles('**/wdk.props') }}
@@ -68,15 +68,15 @@ jobs:
         run: |
           [Environment]::Is64BitProcess
 
-      - uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8  # v6.0.1
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1  # v7.0.1
         with:
           submodules: 'recursive'
 
       - name: Add MSBuild to PATH
-        uses: microsoft/setup-msbuild@becb80cf9a036187bb1e07e74eb64e25850d757a
+        uses: microsoft/setup-msbuild@c26a08ba26249b81327e26f6ef381897b6a8754d
 
       - name: Cache nuget packages
-        uses: actions/cache@v5
+        uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
         env:
           cache-name: cache-nuget-modules
         with:
