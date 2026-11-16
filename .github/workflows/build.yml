@@ -25,7 +25,8 @@ jobs:
     strategy:
       matrix:
         configurations: [Debug, Release]
-    runs-on: windows-latest
+    # WDK 10.0.26100.4204 requires MSBuild 17 (Visual Studio 2022).
+    runs-on: windows-2022
     env:
       # Configuration type to build.  For documentation on how build matrices work, see
       # https://docs.github.com/actions/learn-github-actions/managing-complex-workflows#using-a-build-matrix
@@ -74,6 +75,19 @@ jobs:
 
       - name: Add MSBuild to PATH
         uses: microsoft/setup-msbuild@becb80cf9a036187bb1e07e74eb64e25850d757a
+        with:
+          vs-version: '[17.0,18.0)'
+
+      - name: Verify MSBuild version
+        run: |
+          $msbuildVersion = & msbuild -version -nologo
+          if ($LASTEXITCODE -ne 0) {
+            throw "Failed to query MSBuild version."
+          }
+          Write-Host "MSBuild version: $msbuildVersion"
+          if (([version]$msbuildVersion).Major -ne 17) {
+            throw "Expected MSBuild 17 (Visual Studio 2022), but found $msbuildVersion."
+          }
 
       - name: Cache nuget packages
         uses: actions/cache@v5
